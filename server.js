@@ -1,13 +1,46 @@
+'use strict';
+
 const koa = require('koa');
-const exec = require('child_process').exec;
-const router = require('koa-router')();
+const bodyParser = require('koa-bodyparser');
+const mysql = require('mysql2/promise');
+const compose = require('koa-compose');
+const compress = require('koa-compress');
 
-const app = koa();
+const app = module.exports = koa();
 
-const PORT = process.env.PORT || 8080;
+const config = require('./config');
+global.connectionPool = mysql.createPool(config);
 
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
-    //exec(`OPEN http://localhost:${PORT}/`); //for "production"
+
+app.use(compress({}));
+app.use(bodyParser());
+
+app.use(function* subApp(next) {
+    this.state.subapp = this.request.url.split('/')[1];
+    yield next;
 });
+
+
+
+
+
+app.use(function* composeSubapp() {
+    console.log(this.state.subapp);
+    switch (this.state.subapp) {
+        case 'api': yield compose(require('./api/api-app').middleware); break;
+        default:
+            yield compose(require('./www/www-app').middleware); break;
+    }
+});
+
+
+
+
+
+
+if (!module.parent) {
+    app.listen(process.env.PORT || 8080, () => {
+        console.log(`Server listening...`);
+    });
+}
