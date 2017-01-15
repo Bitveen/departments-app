@@ -26,7 +26,6 @@ app.use(function* subApp(next) {
 
 
 app.use(function* composeSubapp() {
-    console.log(this.state.subapp);
     switch (this.state.subapp) {
         case 'api': yield compose(require('./api/api-app').middleware); break;
         default:
