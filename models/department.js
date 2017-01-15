@@ -15,6 +15,13 @@ Department.get = function* (id) {
 };
 
 
+/**
+ * Department - description
+ *
+ * @param  {type} id   description
+ * @param  {type} name description
+ * @return {type}      description
+ */
 Department.update = function* (id, name) {
     // TODO: validation params
     try {
@@ -25,6 +32,12 @@ Department.update = function* (id, name) {
 };
 
 
+/**
+ * Department - description
+ *
+ * @param  {type} name description
+ * @return {type}      description
+ */
 Department.create = function* (name) {
     // TODO: validation params
     try {
@@ -36,6 +49,11 @@ Department.create = function* (name) {
 };
 
 
+/**
+ * Department - description
+ *  
+ * @return {type}  description
+ */
 Department.getAll = function* () {
     const [departments] = yield global.db.query('SELECT * FROM departments ORDER BY id');
     return departments;
