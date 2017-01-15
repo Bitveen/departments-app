@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
+    "test:react": "mocha frontend/test",
     "start": "node server.js"
   },
   "keywords": [
