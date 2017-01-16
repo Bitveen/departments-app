@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import DepartmentForm from 'DepartmentForm';
-
+import { updateDepartment } from 'actions';
 
 
 const mapStateToProps = (state, { params: { id }}) => {
@@ -11,7 +11,7 @@ const mapStateToProps = (state, { params: { id }}) => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onUpdateDepartment: (department) => dispatch(updateDepartment(department))
     };
 };
 

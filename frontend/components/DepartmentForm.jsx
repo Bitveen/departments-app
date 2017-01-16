@@ -6,12 +6,21 @@ export default class DepartmentForm extends React.Component {
     constructor(props) {
         super(props);
         this.createDepartment = this.createDepartment.bind(this);
+        this.save = this.save.bind(this);
     }
 
     createDepartment() {
         let name = this.refs.name.value.trim();
         if (name) {
             this.props.onCreateDepartment({name});
+        }
+    }
+
+    save() {
+        let name = this.refs.name.value.trim();
+        let id = parseInt(this.props.params.id);
+        if (name) {
+            this.props.onUpdateDepartment({ id, name });
         }
     }
 
@@ -35,7 +44,7 @@ export default class DepartmentForm extends React.Component {
                         {this.props.onCreateDepartment ?
                             <button className='btn btn-primary btn-sm' onClick={this.createDepartment}>Create</button>
                             :
-                            <button className='btn btn-primary btn-sm'>Save</button>
+                            <button className='btn btn-primary btn-sm' onClick={this.save}>Save</button>
                         }
                         <Link className='btn btn-primary btn-sm' to={cancelPath}>Cancel</Link>
                     </div>

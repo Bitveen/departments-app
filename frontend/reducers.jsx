@@ -2,7 +2,7 @@ import { routerReducer } from 'react-router-redux';
 import { combineReducers } from 'redux';
 
 
-export const departments = (state = {
+const departments = (state = {
     isFetching: false,
     items: []
 }, action) => {
@@ -32,8 +32,21 @@ export const departments = (state = {
                 isFetching: false
             });
             break;
-        case 'CREATE_DEPARTMENT':
-            return state;
+        case 'REQUEST_UPDATE_DEPARTMENT':
+            return Object.assign({}, state, {
+                isFetching: true
+            });
+            break;
+        case 'SUCCESS_UPDATE_DEPARTMENT':
+            return Object.assign({}, state, {
+                isFetching: false,
+                items: state.items.map(item => {
+                    if (item.id === action.id) {
+                        item.name = action.name;
+                    }
+                    return item;
+                })
+            });
             break;
         default:
             return state;

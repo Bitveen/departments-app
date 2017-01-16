@@ -25,10 +25,6 @@ const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
 const history = syncHistoryWithStore(browserHistory, store);
 
-//
-// store.subscribe(() => {
-//     console.log(store.getState());
-// });
 
 const routes = (
     <Route path='/' component={App}>
@@ -39,6 +35,7 @@ const routes = (
         <IndexRoute component={Index} />
     </Route>
 );
+
 
 
 render(

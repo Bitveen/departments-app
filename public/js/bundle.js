@@ -102,11 +102,6 @@
 
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory, store);
 
-	//
-	// store.subscribe(() => {
-	//     console.log(store.getState());
-	// });
-
 	var routes = _react2.default.createElement(
 	    _reactRouter.Route,
 	    { path: '/', component: _App2.default },
@@ -29102,13 +29097,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.departments = undefined;
 
 	var _reactRouterRedux = __webpack_require__(269);
 
 	var _redux = __webpack_require__(189);
 
-	var departments = exports.departments = function departments() {
+	var departments = function departments() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
 	        isFetching: false,
 	        items: []
@@ -29141,8 +29135,21 @@
 	                isFetching: false
 	            });
 	            break;
-	        case 'CREATE_DEPARTMENT':
-	            return state;
+	        case 'REQUEST_UPDATE_DEPARTMENT':
+	            return Object.assign({}, state, {
+	                isFetching: true
+	            });
+	            break;
+	        case 'SUCCESS_UPDATE_DEPARTMENT':
+	            return Object.assign({}, state, {
+	                isFetching: false,
+	                items: state.items.map(function (item) {
+	                    if (item.id === action.id) {
+	                        item.name = action.name;
+	                    }
+	                    return item;
+	                })
+	            });
 	            break;
 	        default:
 	            return state;
@@ -29163,9 +29170,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.successCreateDepartment = exports.requestCreateDepartment = exports.receiveDepartments = exports.requestDepartments = undefined;
 	exports.fetchDepartments = fetchDepartments;
 	exports.createDepartment = createDepartment;
+	exports.updateDepartment = updateDepartment;
 
 	var _isomorphicFetch = __webpack_require__(291);
 
@@ -29175,13 +29182,13 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var requestDepartments = exports.requestDepartments = function requestDepartments() {
+	var requestDepartments = function requestDepartments() {
 	    return {
 	        type: 'REQUEST_DEPARTMENTS'
 	    };
 	};
 
-	var receiveDepartments = exports.receiveDepartments = function receiveDepartments(json) {
+	var receiveDepartments = function receiveDepartments(json) {
 	    return {
 	        type: 'RECEIVE_DEPARTMENTS',
 	        data: json
@@ -29199,15 +29206,13 @@
 	    };
 	};
 
-	var requestCreateDepartment = exports.requestCreateDepartment = function requestCreateDepartment() {
-	    console.log('requestCreateDepartment');
+	var requestCreateDepartment = function requestCreateDepartment() {
 	    return {
 	        type: 'REQUEST_CREATE_DEPARTMENT'
 	    };
 	};
 
-	var successCreateDepartment = exports.successCreateDepartment = function successCreateDepartment(json) {
-	    console.log('successCreateDepartment');
+	var successCreateDepartment = function successCreateDepartment(json) {
 	    return {
 	        type: 'SUCCESS_CREATE_DEPARTMENT',
 	        data: json
@@ -29223,17 +29228,35 @@
 	            return response.json();
 	        }).then(function (json) {
 	            _reactRouter.browserHistory.push('/departments');
-	            return dispatch(successCreateDepartment(json));
+	            dispatch(successCreateDepartment(json));
 	        });
 	    };
 	};
 
-	// export const createDepartment = (name) => {
-	//     return {
-	//         type: 'CREATE_DEPARTMENT',
-	//         data: name
-	//     };
-	// };
+	function updateDepartment(department) {
+	    return function (dispatch) {
+	        dispatch(requestUpdateDepartment());
+	        return (0, _isomorphicFetch2.default)('/api/department/' + department.id, { method: 'PUT', headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify({ name: department.name }) }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            dispatch(successUpdateDepartment(json));
+	            _reactRouter.browserHistory.push('/departments');
+	        });
+	    };
+	};
+
+	var requestUpdateDepartment = function requestUpdateDepartment() {
+	    return {
+	        type: 'REQUEST_UPDATE_DEPARTMENT'
+	    };
+	};
+
+	var successUpdateDepartment = function successUpdateDepartment() {
+	    return {
+	        type: 'SUCCESS_UPDATE_DEPARTMENT'
+	    };
+	};
 
 /***/ },
 /* 277 */
@@ -29722,6 +29745,7 @@
 	        var _this = _possibleConstructorReturn(this, (DepartmentForm.__proto__ || Object.getPrototypeOf(DepartmentForm)).call(this, props));
 
 	        _this.createDepartment = _this.createDepartment.bind(_this);
+	        _this.save = _this.save.bind(_this);
 	        return _this;
 	    }
 
@@ -29731,6 +29755,15 @@
 	            var name = this.refs.name.value.trim();
 	            if (name) {
 	                this.props.onCreateDepartment({ name: name });
+	            }
+	        }
+	    }, {
+	        key: 'save',
+	        value: function save() {
+	            var name = this.refs.name.value.trim();
+	            var id = parseInt(this.props.params.id);
+	            if (name) {
+	                this.props.onUpdateDepartment({ id: id, name: name });
 	            }
 	        }
 	    }, {
@@ -29774,7 +29807,7 @@
 	                            'Create'
 	                        ) : _react2.default.createElement(
 	                            'button',
-	                            { className: 'btn btn-primary btn-sm' },
+	                            { className: 'btn btn-primary btn-sm', onClick: this.save },
 	                            'Save'
 	                        ),
 	                        _react2.default.createElement(
@@ -29814,6 +29847,8 @@
 
 	var _DepartmentForm2 = _interopRequireDefault(_DepartmentForm);
 
+	var _actions = __webpack_require__(276);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var mapStateToProps = function mapStateToProps(state, _ref) {
@@ -29826,7 +29861,11 @@
 	    };
 	};
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	    return {};
+	    return {
+	        onUpdateDepartment: function onUpdateDepartment(department) {
+	            return dispatch((0, _actions.updateDepartment)(department));
+	        }
+	    };
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_DepartmentForm2.default);

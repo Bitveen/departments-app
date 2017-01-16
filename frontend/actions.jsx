@@ -3,13 +3,13 @@ import { browserHistory } from 'react-router';
 
 
 
-export const requestDepartments = () => {
+const requestDepartments = () => {
     return {
         type: 'REQUEST_DEPARTMENTS'
     }
 };
 
-export const receiveDepartments = (json) => {
+const receiveDepartments = (json) => {
     return {
         type: 'RECEIVE_DEPARTMENTS',
         data: json
@@ -30,16 +30,14 @@ export function fetchDepartments() {
 
 
 
-export const requestCreateDepartment = () => {
-    console.log('requestCreateDepartment');
+const requestCreateDepartment = () => {
     return {
         type: 'REQUEST_CREATE_DEPARTMENT'
     };
 };
 
 
-export const successCreateDepartment = (json) => {
-    console.log('successCreateDepartment');
+const successCreateDepartment = (json) => {
     return {
         type: 'SUCCESS_CREATE_DEPARTMENT',
         data: json
@@ -58,19 +56,40 @@ export function createDepartment(department) {
             .then(response => response.json())
             .then(json => {
                 browserHistory.push('/departments');
-                return dispatch(successCreateDepartment(json));
+                dispatch(successCreateDepartment(json));
             });
     };
 };
 
 
 
+export function updateDepartment(department) {
+    return dispatch => {
+        dispatch(requestUpdateDepartment());
+        return fetch(`/api/department/${department.id}`,
+            { method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: department.name }) })
+            .then(response => response.json())
+            .then(json => {
+                dispatch(successUpdateDepartment(json));
+                browserHistory.push(`/departments`);
+            });
+    };
+
+
+};
 
 
 
-// export const createDepartment = (name) => {
-//     return {
-//         type: 'CREATE_DEPARTMENT',
-//         data: name
-//     };
-// };
+const requestUpdateDepartment = () => {
+    return {
+        type: 'REQUEST_UPDATE_DEPARTMENT'
+    };
+};
+
+
+const successUpdateDepartment = () => {
+    return {
+        type: 'SUCCESS_UPDATE_DEPARTMENT'
+    };
+};

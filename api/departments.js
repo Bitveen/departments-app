@@ -52,9 +52,10 @@ handler.create = function* () {
  * @return {type}  description
  */
 handler.update = function* () {
-    let { id, name } = this.params;
+    let { id } = this.params;
+    let { name } = this.request.body;
     yield Department.update(id, name);
     this.status = 200;
     this.set('Content-Type', 'application/json');
-    this.body = { status: 'OK' };
+    this.body = { id, name };
 };
