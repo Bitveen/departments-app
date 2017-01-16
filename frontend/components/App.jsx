@@ -1,8 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Sidebar from 'Sidebar';
 
-
-export const App = () => {
+const App = ({ children }) => {
     return (
-        <div>App</div>
+        <div className='container-fluid'>
+            <div className="row">
+                <Sidebar />
+                {children}
+            </div>
+        </div>
     );
 };
+
+export default App;

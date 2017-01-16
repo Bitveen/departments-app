@@ -6,7 +6,20 @@ module.exports = {
     },
     resolve: {
         root: __dirname + '/frontend',
-        alias: {},
+        alias: {
+            App: 'components/App.jsx',
+            Sidebar: 'components/Sidebar.jsx',
+            Index: 'components/Index.jsx',
+            DepartmentsList: 'components/DepartmentsList.jsx',
+            Department: 'components/Department.jsx',
+            actions: 'actions.jsx',
+            reducers: 'reducers.jsx',
+            DepartmentForm: 'components/DepartmentForm.jsx',
+            DepartmentsListView: 'components/DepartmentsListView.jsx',
+            DepartmentCreate: 'containers/DepartmentCreate.jsx',
+            DepartmentEdit: 'containers/DepartmentEdit.jsx',
+            DepartmentView: 'components/DepartmentView.jsx'
+        },
         extensions: ['', '.js', '.jsx']
     },
     module: {

@@ -3,25 +3,38 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
-import { createStore, combineReducers } from 'redux';
+import { createStore } from 'redux';
 
 
-import * as reducers from 'reducers';
+import rootReducer from 'reducers';
+import App from 'App';
+import Index from 'Index';
+import DepartmentsListView from 'DepartmentsListView';
+import DepartmentView from 'DepartmentView';
+import DepartmentCreate from 'DepartmentCreate';
+import DepartmentEdit from 'DepartmentEdit';
+
+require('style!css!sass!style/app.scss');
 
 
-const store = createStore(combineReducers({
-    departments: reducers.departments,
-    rounting: routerReducer
-}));
+const store = createStore(rootReducer);
 
+
+store.subscribe(() => {
+    console.log(store.getState());
+});
 
 const history = syncHistoryWithStore(browserHistory, store);
 
 
-
-
 const routes = (
-    <Route path='/' component={App} />
+    <Route path='/' component={App}>
+        <Route path='/departments' component={DepartmentsListView} />
+        <Route path='/department/create' component={DepartmentCreate} />
+        <Route path='/department/:id' component={DepartmentView} />
+        <Route path='/department/:id/edit' component={DepartmentEdit} />
+        <IndexRoute component={Index} />
+    </Route>
 );
 
 
