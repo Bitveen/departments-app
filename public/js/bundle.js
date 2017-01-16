@@ -60,9 +60,15 @@
 
 	var _redux = __webpack_require__(189);
 
+	var _reduxThunk = __webpack_require__(292);
+
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
 	var _reducers = __webpack_require__(274);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
+
+	var _actions = __webpack_require__(283);
 
 	var _App = __webpack_require__(275);
 
@@ -92,11 +98,7 @@
 
 	__webpack_require__(286);
 
-	var store = (0, _redux.createStore)(_reducers2.default);
-
-	store.subscribe(function () {
-	    console.log(store.getState());
-	});
+	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory, store);
 
@@ -29067,104 +29069,34 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.createDepartment = exports.departments = undefined;
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	exports.departments = undefined;
 
 	var _reactRouterRedux = __webpack_require__(269);
 
 	var _redux = __webpack_require__(189);
 
-	var defaultData = [{
-	    id: 1,
-	    name: 'Marketing',
-	    edit: false
-	}, {
-	    id: 2,
-	    name: 'Support',
-	    edit: false
-	}];
-
 	var departments = exports.departments = function departments() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
 	        isFetching: false,
-	        items: defaultData
+	        items: []
 	    };
 	    var action = arguments[1];
 
-	    var _ret = function () {
-
-	        switch (action.type) {
-	            case 'FETCH_START':
-	                break;
-	            case 'FETCH_SUCCESS':
-	                break;
-	            case 'CREATE_DEPARTMENT':
-	                return {
-	                    v: state
-	                };
-	                break;
-	            case 'UPDATE_DEPARTMENT':
-	                var _action$data = action.data,
-	                    id = _action$data.id,
-	                    name = _action$data.name;
-
-	                return {
-	                    v: state.map(function (department) {
-	                        if (department.id === id) {
-	                            department.name = name;
-	                        }
-	                        return department;
-	                    })
-	                };
-	                break;
-	            case 'SHOW_EDIT_FORM':
-	                return {
-	                    v: state.map(function (department) {
-	                        if (department.id === action.data) {
-	                            department.edit = true;
-	                        }
-	                        return department;
-	                    })
-	                };
-	                break;
-	            case 'HIDE_EDIT_FORM':
-	                return {
-	                    v: state.map(function (department) {
-	                        if (department.id === action.data) {
-	                            department.edit = false;
-	                        }
-	                        return department;
-	                    })
-	                };
-	                break;
-	            default:
-	                return {
-	                    v: state
-	                };
-	        }
-	    }();
-
-	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	};
-
-	var createDepartment = exports.createDepartment = function createDepartment() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-	        showForm: false,
-	        isFetching: false
-	    };
-	    var action = arguments[1];
 
 	    switch (action.type) {
-	        case 'SHOW_CREATE_DEPARTMENT':
+	        case 'REQUEST_DEPARTMENTS':
 	            return Object.assign({}, state, {
-	                showForm: true
+	                isFetching: true
 	            });
 	            break;
-	        case 'HIDE_CREATE_DEPARTMENT':
+	        case 'RECEIVE_DEPARTMENTS':
 	            return Object.assign({}, state, {
-	                showForm: false
+	                items: action.data,
+	                isFetching: false
 	            });
+	            break;
+	        case 'CREATE_DEPARTMENT':
+	            return state;
 	            break;
 	        default:
 	            return state;
@@ -29173,7 +29105,6 @@
 
 	exports.default = (0, _redux.combineReducers)({
 	    departments: departments,
-	    createDepartment: createDepartment,
 	    routing: _reactRouterRedux.routerReducer
 	});
 
@@ -29299,6 +29230,8 @@
 	    value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -29311,7 +29244,15 @@
 
 	var _reactRouter = __webpack_require__(216);
 
+	var _actions = __webpack_require__(283);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
@@ -29319,43 +29260,73 @@
 	    };
 	};
 
-	var DepartmentsListView = function DepartmentsListView(_ref) {
-	    var departments = _ref.departments;
-
-	    return _react2.default.createElement(
-	        'div',
-	        { className: 'col-lg-9 col-md-9 col-sm-9' },
-	        _react2.default.createElement(
-	            'div',
-	            { className: 'panel panel-default departments-list' },
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'panel-heading' },
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
-	                    'All departments'
-	                )
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'panel-body' },
-	                _react2.default.createElement(_DepartmentsList2.default, { departments: departments })
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'panel-footer' },
-	                _react2.default.createElement(
-	                    _reactRouter.Link,
-	                    { className: 'btn btn-primary btn-sm', to: '/department/create' },
-	                    'Create department'
-	                )
-	            )
-	        )
-	    );
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	    return {
+	        fetchDepartments: function fetchDepartments() {
+	            return dispatch((0, _actions.fetchDepartments)());
+	        }
+	    };
 	};
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(DepartmentsListView);
+	var DepartmentsListView = function (_React$Component) {
+	    _inherits(DepartmentsListView, _React$Component);
+
+	    function DepartmentsListView(props) {
+	        _classCallCheck(this, DepartmentsListView);
+
+	        return _possibleConstructorReturn(this, (DepartmentsListView.__proto__ || Object.getPrototypeOf(DepartmentsListView)).call(this, props));
+	    }
+
+	    _createClass(DepartmentsListView, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.props.fetchDepartments();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var departments = this.props.departments;
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-lg-9 col-md-9 col-sm-9' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default departments-list' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h4',
+	                            null,
+	                            'All departments'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(_DepartmentsList2.default, { departments: departments })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-footer' },
+	                        _react2.default.createElement(
+	                            _reactRouter.Link,
+	                            { className: 'btn btn-primary btn-sm', to: '/department/create' },
+	                            'Create department'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return DepartmentsListView;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(DepartmentsListView);
 
 /***/ },
 /* 279 */
@@ -29605,13 +29576,22 @@
 
 /***/ },
 /* 283 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.receiveDepartments = exports.requestDepartments = exports.createDepartment = undefined;
+	exports.fetchDepartments = fetchDepartments;
+
+	var _isomorphicFetch = __webpack_require__(290);
+
+	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	var createDepartment = exports.createDepartment = function createDepartment(department) {
 	    return {
 	        type: 'CREATE_DEPARTMENT',
@@ -29619,15 +29599,27 @@
 	    };
 	};
 
-	var showCreateDepartment = exports.showCreateDepartment = function showCreateDepartment() {
+	var requestDepartments = exports.requestDepartments = function requestDepartments() {
 	    return {
-	        type: 'SHOW_CREATE_DEPARTMENT'
+	        type: 'REQUEST_DEPARTMENTS'
 	    };
 	};
 
-	var hideCreateDepartment = exports.hideCreateDepartment = function hideCreateDepartment() {
+	var receiveDepartments = exports.receiveDepartments = function receiveDepartments(json) {
 	    return {
-	        type: 'HIDE_CREATE_DEPARTMENT'
+	        type: 'RECEIVE_DEPARTMENTS',
+	        data: json
+	    };
+	};
+
+	function fetchDepartments() {
+	    return function (dispatch) {
+	        dispatch(requestDepartments());
+	        return (0, _isomorphicFetch2.default)('/api/departments').then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            return dispatch(receiveDepartments(json));
+	        });
 	    };
 	};
 
@@ -29635,45 +29627,6 @@
 	//     return {
 	//         type: 'CREATE_DEPARTMENT',
 	//         data: name
-	//     };
-	// };
-	//
-	// export const updateDepartment = (id, name) => {
-	//     return {
-	//         type: 'UPDATE_DEPARTMENT',
-	//         data: {
-	//             id,
-	//             name
-	//         }
-	//     };
-	// };
-	//
-	//
-	// export const showCreateDepartment = () => {
-	//     return {
-	//         type: 'SHOW_CREATE_DEPARTMENT'
-	//     };
-	// };
-	//
-	// export const hideCreateDepartment = () => {
-	//     return {
-	//         type: 'HIDE_CREATE_DEPARTMENT'
-	//     };
-	// };
-	//
-	//
-	// export const showEditForm = (id) => {
-	//     return {
-	//         type: 'SHOW_EDIT_FORM',
-	//         data: id
-	//     };
-	// };
-	//
-	//
-	// export const hideEditForm = (id) => {
-	//     return {
-	//         type: 'HIDE_EDIT_FORM',
-	//         data: id
 	//     };
 	// };
 
@@ -30137,6 +30090,510 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 290 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// the whatwg-fetch polyfill installs the fetch() function
+	// on the global object (window or self)
+	//
+	// Return that as the export for use in Webpack, Browserify etc.
+	__webpack_require__(291);
+	module.exports = self.fetch.bind(self);
+
+
+/***/ },
+/* 291 */
+/***/ function(module, exports) {
+
+	(function(self) {
+	  'use strict';
+
+	  if (self.fetch) {
+	    return
+	  }
+
+	  var support = {
+	    searchParams: 'URLSearchParams' in self,
+	    iterable: 'Symbol' in self && 'iterator' in Symbol,
+	    blob: 'FileReader' in self && 'Blob' in self && (function() {
+	      try {
+	        new Blob()
+	        return true
+	      } catch(e) {
+	        return false
+	      }
+	    })(),
+	    formData: 'FormData' in self,
+	    arrayBuffer: 'ArrayBuffer' in self
+	  }
+
+	  if (support.arrayBuffer) {
+	    var viewClasses = [
+	      '[object Int8Array]',
+	      '[object Uint8Array]',
+	      '[object Uint8ClampedArray]',
+	      '[object Int16Array]',
+	      '[object Uint16Array]',
+	      '[object Int32Array]',
+	      '[object Uint32Array]',
+	      '[object Float32Array]',
+	      '[object Float64Array]'
+	    ]
+
+	    var isDataView = function(obj) {
+	      return obj && DataView.prototype.isPrototypeOf(obj)
+	    }
+
+	    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
+	      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+	    }
+	  }
+
+	  function normalizeName(name) {
+	    if (typeof name !== 'string') {
+	      name = String(name)
+	    }
+	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+	      throw new TypeError('Invalid character in header field name')
+	    }
+	    return name.toLowerCase()
+	  }
+
+	  function normalizeValue(value) {
+	    if (typeof value !== 'string') {
+	      value = String(value)
+	    }
+	    return value
+	  }
+
+	  // Build a destructive iterator for the value list
+	  function iteratorFor(items) {
+	    var iterator = {
+	      next: function() {
+	        var value = items.shift()
+	        return {done: value === undefined, value: value}
+	      }
+	    }
+
+	    if (support.iterable) {
+	      iterator[Symbol.iterator] = function() {
+	        return iterator
+	      }
+	    }
+
+	    return iterator
+	  }
+
+	  function Headers(headers) {
+	    this.map = {}
+
+	    if (headers instanceof Headers) {
+	      headers.forEach(function(value, name) {
+	        this.append(name, value)
+	      }, this)
+
+	    } else if (headers) {
+	      Object.getOwnPropertyNames(headers).forEach(function(name) {
+	        this.append(name, headers[name])
+	      }, this)
+	    }
+	  }
+
+	  Headers.prototype.append = function(name, value) {
+	    name = normalizeName(name)
+	    value = normalizeValue(value)
+	    var oldValue = this.map[name]
+	    this.map[name] = oldValue ? oldValue+','+value : value
+	  }
+
+	  Headers.prototype['delete'] = function(name) {
+	    delete this.map[normalizeName(name)]
+	  }
+
+	  Headers.prototype.get = function(name) {
+	    name = normalizeName(name)
+	    return this.has(name) ? this.map[name] : null
+	  }
+
+	  Headers.prototype.has = function(name) {
+	    return this.map.hasOwnProperty(normalizeName(name))
+	  }
+
+	  Headers.prototype.set = function(name, value) {
+	    this.map[normalizeName(name)] = normalizeValue(value)
+	  }
+
+	  Headers.prototype.forEach = function(callback, thisArg) {
+	    for (var name in this.map) {
+	      if (this.map.hasOwnProperty(name)) {
+	        callback.call(thisArg, this.map[name], name, this)
+	      }
+	    }
+	  }
+
+	  Headers.prototype.keys = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push(name) })
+	    return iteratorFor(items)
+	  }
+
+	  Headers.prototype.values = function() {
+	    var items = []
+	    this.forEach(function(value) { items.push(value) })
+	    return iteratorFor(items)
+	  }
+
+	  Headers.prototype.entries = function() {
+	    var items = []
+	    this.forEach(function(value, name) { items.push([name, value]) })
+	    return iteratorFor(items)
+	  }
+
+	  if (support.iterable) {
+	    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+	  }
+
+	  function consumed(body) {
+	    if (body.bodyUsed) {
+	      return Promise.reject(new TypeError('Already read'))
+	    }
+	    body.bodyUsed = true
+	  }
+
+	  function fileReaderReady(reader) {
+	    return new Promise(function(resolve, reject) {
+	      reader.onload = function() {
+	        resolve(reader.result)
+	      }
+	      reader.onerror = function() {
+	        reject(reader.error)
+	      }
+	    })
+	  }
+
+	  function readBlobAsArrayBuffer(blob) {
+	    var reader = new FileReader()
+	    var promise = fileReaderReady(reader)
+	    reader.readAsArrayBuffer(blob)
+	    return promise
+	  }
+
+	  function readBlobAsText(blob) {
+	    var reader = new FileReader()
+	    var promise = fileReaderReady(reader)
+	    reader.readAsText(blob)
+	    return promise
+	  }
+
+	  function readArrayBufferAsText(buf) {
+	    var view = new Uint8Array(buf)
+	    var chars = new Array(view.length)
+
+	    for (var i = 0; i < view.length; i++) {
+	      chars[i] = String.fromCharCode(view[i])
+	    }
+	    return chars.join('')
+	  }
+
+	  function bufferClone(buf) {
+	    if (buf.slice) {
+	      return buf.slice(0)
+	    } else {
+	      var view = new Uint8Array(buf.byteLength)
+	      view.set(new Uint8Array(buf))
+	      return view.buffer
+	    }
+	  }
+
+	  function Body() {
+	    this.bodyUsed = false
+
+	    this._initBody = function(body) {
+	      this._bodyInit = body
+	      if (!body) {
+	        this._bodyText = ''
+	      } else if (typeof body === 'string') {
+	        this._bodyText = body
+	      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+	        this._bodyBlob = body
+	      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+	        this._bodyFormData = body
+	      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	        this._bodyText = body.toString()
+	      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+	        this._bodyArrayBuffer = bufferClone(body.buffer)
+	        // IE 10-11 can't handle a DataView body.
+	        this._bodyInit = new Blob([this._bodyArrayBuffer])
+	      } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+	        this._bodyArrayBuffer = bufferClone(body)
+	      } else {
+	        throw new Error('unsupported BodyInit type')
+	      }
+
+	      if (!this.headers.get('content-type')) {
+	        if (typeof body === 'string') {
+	          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+	        } else if (this._bodyBlob && this._bodyBlob.type) {
+	          this.headers.set('content-type', this._bodyBlob.type)
+	        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+	          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+	        }
+	      }
+	    }
+
+	    if (support.blob) {
+	      this.blob = function() {
+	        var rejected = consumed(this)
+	        if (rejected) {
+	          return rejected
+	        }
+
+	        if (this._bodyBlob) {
+	          return Promise.resolve(this._bodyBlob)
+	        } else if (this._bodyArrayBuffer) {
+	          return Promise.resolve(new Blob([this._bodyArrayBuffer]))
+	        } else if (this._bodyFormData) {
+	          throw new Error('could not read FormData body as blob')
+	        } else {
+	          return Promise.resolve(new Blob([this._bodyText]))
+	        }
+	      }
+
+	      this.arrayBuffer = function() {
+	        if (this._bodyArrayBuffer) {
+	          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+	        } else {
+	          return this.blob().then(readBlobAsArrayBuffer)
+	        }
+	      }
+	    }
+
+	    this.text = function() {
+	      var rejected = consumed(this)
+	      if (rejected) {
+	        return rejected
+	      }
+
+	      if (this._bodyBlob) {
+	        return readBlobAsText(this._bodyBlob)
+	      } else if (this._bodyArrayBuffer) {
+	        return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
+	      } else if (this._bodyFormData) {
+	        throw new Error('could not read FormData body as text')
+	      } else {
+	        return Promise.resolve(this._bodyText)
+	      }
+	    }
+
+	    if (support.formData) {
+	      this.formData = function() {
+	        return this.text().then(decode)
+	      }
+	    }
+
+	    this.json = function() {
+	      return this.text().then(JSON.parse)
+	    }
+
+	    return this
+	  }
+
+	  // HTTP methods whose capitalization should be normalized
+	  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+	  function normalizeMethod(method) {
+	    var upcased = method.toUpperCase()
+	    return (methods.indexOf(upcased) > -1) ? upcased : method
+	  }
+
+	  function Request(input, options) {
+	    options = options || {}
+	    var body = options.body
+
+	    if (typeof input === 'string') {
+	      this.url = input
+	    } else {
+	      if (input.bodyUsed) {
+	        throw new TypeError('Already read')
+	      }
+	      this.url = input.url
+	      this.credentials = input.credentials
+	      if (!options.headers) {
+	        this.headers = new Headers(input.headers)
+	      }
+	      this.method = input.method
+	      this.mode = input.mode
+	      if (!body && input._bodyInit != null) {
+	        body = input._bodyInit
+	        input.bodyUsed = true
+	      }
+	    }
+
+	    this.credentials = options.credentials || this.credentials || 'omit'
+	    if (options.headers || !this.headers) {
+	      this.headers = new Headers(options.headers)
+	    }
+	    this.method = normalizeMethod(options.method || this.method || 'GET')
+	    this.mode = options.mode || this.mode || null
+	    this.referrer = null
+
+	    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+	      throw new TypeError('Body not allowed for GET or HEAD requests')
+	    }
+	    this._initBody(body)
+	  }
+
+	  Request.prototype.clone = function() {
+	    return new Request(this, { body: this._bodyInit })
+	  }
+
+	  function decode(body) {
+	    var form = new FormData()
+	    body.trim().split('&').forEach(function(bytes) {
+	      if (bytes) {
+	        var split = bytes.split('=')
+	        var name = split.shift().replace(/\+/g, ' ')
+	        var value = split.join('=').replace(/\+/g, ' ')
+	        form.append(decodeURIComponent(name), decodeURIComponent(value))
+	      }
+	    })
+	    return form
+	  }
+
+	  function parseHeaders(rawHeaders) {
+	    var headers = new Headers()
+	    rawHeaders.split('\r\n').forEach(function(line) {
+	      var parts = line.split(':')
+	      var key = parts.shift().trim()
+	      if (key) {
+	        var value = parts.join(':').trim()
+	        headers.append(key, value)
+	      }
+	    })
+	    return headers
+	  }
+
+	  Body.call(Request.prototype)
+
+	  function Response(bodyInit, options) {
+	    if (!options) {
+	      options = {}
+	    }
+
+	    this.type = 'default'
+	    this.status = 'status' in options ? options.status : 200
+	    this.ok = this.status >= 200 && this.status < 300
+	    this.statusText = 'statusText' in options ? options.statusText : 'OK'
+	    this.headers = new Headers(options.headers)
+	    this.url = options.url || ''
+	    this._initBody(bodyInit)
+	  }
+
+	  Body.call(Response.prototype)
+
+	  Response.prototype.clone = function() {
+	    return new Response(this._bodyInit, {
+	      status: this.status,
+	      statusText: this.statusText,
+	      headers: new Headers(this.headers),
+	      url: this.url
+	    })
+	  }
+
+	  Response.error = function() {
+	    var response = new Response(null, {status: 0, statusText: ''})
+	    response.type = 'error'
+	    return response
+	  }
+
+	  var redirectStatuses = [301, 302, 303, 307, 308]
+
+	  Response.redirect = function(url, status) {
+	    if (redirectStatuses.indexOf(status) === -1) {
+	      throw new RangeError('Invalid status code')
+	    }
+
+	    return new Response(null, {status: status, headers: {location: url}})
+	  }
+
+	  self.Headers = Headers
+	  self.Request = Request
+	  self.Response = Response
+
+	  self.fetch = function(input, init) {
+	    return new Promise(function(resolve, reject) {
+	      var request = new Request(input, init)
+	      var xhr = new XMLHttpRequest()
+
+	      xhr.onload = function() {
+	        var options = {
+	          status: xhr.status,
+	          statusText: xhr.statusText,
+	          headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+	        }
+	        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+	        var body = 'response' in xhr ? xhr.response : xhr.responseText
+	        resolve(new Response(body, options))
+	      }
+
+	      xhr.onerror = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+
+	      xhr.ontimeout = function() {
+	        reject(new TypeError('Network request failed'))
+	      }
+
+	      xhr.open(request.method, request.url, true)
+
+	      if (request.credentials === 'include') {
+	        xhr.withCredentials = true
+	      }
+
+	      if ('responseType' in xhr && support.blob) {
+	        xhr.responseType = 'blob'
+	      }
+
+	      request.headers.forEach(function(value, name) {
+	        xhr.setRequestHeader(name, value)
+	      })
+
+	      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+	    })
+	  }
+	  self.fetch.polyfill = true
+	})(typeof self !== 'undefined' ? self : this);
+
+
+/***/ },
+/* 292 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+
+	exports['default'] = thunk;
 
 /***/ }
 /******/ ]);

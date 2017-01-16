@@ -1,3 +1,6 @@
+import fetch from 'isomorphic-fetch';
+
+
 
 export const createDepartment = (department) => {
     return {
@@ -6,20 +9,28 @@ export const createDepartment = (department) => {
     };
 };
 
-export const showCreateDepartment = () => {
+
+export const requestDepartments = () => {
     return {
-        type: 'SHOW_CREATE_DEPARTMENT'
+        type: 'REQUEST_DEPARTMENTS'
+    }
+};
+
+export const receiveDepartments = (json) => {
+    return {
+        type: 'RECEIVE_DEPARTMENTS',
+        data: json
     };
 };
 
-export const hideCreateDepartment = () => {
-    return {
-        type: 'HIDE_CREATE_DEPARTMENT'
+export function fetchDepartments() {
+    return dispatch => {
+        dispatch(requestDepartments());
+        return fetch(`/api/departments`)
+            .then(response => response.json())
+            .then(json => dispatch(receiveDepartments(json)))
     };
 };
-
-
-
 
 
 
@@ -28,44 +39,5 @@ export const hideCreateDepartment = () => {
 //     return {
 //         type: 'CREATE_DEPARTMENT',
 //         data: name
-//     };
-// };
-//
-// export const updateDepartment = (id, name) => {
-//     return {
-//         type: 'UPDATE_DEPARTMENT',
-//         data: {
-//             id,
-//             name
-//         }
-//     };
-// };
-//
-//
-// export const showCreateDepartment = () => {
-//     return {
-//         type: 'SHOW_CREATE_DEPARTMENT'
-//     };
-// };
-//
-// export const hideCreateDepartment = () => {
-//     return {
-//         type: 'HIDE_CREATE_DEPARTMENT'
-//     };
-// };
-//
-//
-// export const showEditForm = (id) => {
-//     return {
-//         type: 'SHOW_EDIT_FORM',
-//         data: id
-//     };
-// };
-//
-//
-// export const hideEditForm = (id) => {
-//     return {
-//         type: 'HIDE_EDIT_FORM',
-//         data: id
 //     };
 // };

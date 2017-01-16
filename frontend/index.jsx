@@ -3,10 +3,14 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 
 
 import rootReducer from 'reducers';
+import { fetchDepartments } from 'actions';
+
+
 import App from 'App';
 import Index from 'Index';
 import DepartmentsListView from 'DepartmentsListView';
@@ -17,12 +21,7 @@ import DepartmentEdit from 'DepartmentEdit';
 require('style!css!sass!style/app.scss');
 
 
-const store = createStore(rootReducer);
-
-
-store.subscribe(() => {
-    console.log(store.getState());
-});
+const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 
 const history = syncHistoryWithStore(browserHistory, store);
 
