@@ -60,47 +60,52 @@
 
 	var _redux = __webpack_require__(189);
 
-	var _reduxThunk = __webpack_require__(292);
+	var _reduxThunk = __webpack_require__(274);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reducers = __webpack_require__(274);
+	var _reducers = __webpack_require__(275);
 
 	var _reducers2 = _interopRequireDefault(_reducers);
 
-	var _actions = __webpack_require__(283);
+	var _actions = __webpack_require__(276);
 
-	var _App = __webpack_require__(275);
+	var _App = __webpack_require__(277);
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _Index = __webpack_require__(277);
+	var _Index = __webpack_require__(279);
 
 	var _Index2 = _interopRequireDefault(_Index);
 
-	var _DepartmentsListView = __webpack_require__(278);
+	var _DepartmentsListView = __webpack_require__(280);
 
 	var _DepartmentsListView2 = _interopRequireDefault(_DepartmentsListView);
 
-	var _DepartmentView = __webpack_require__(284);
+	var _DepartmentView = __webpack_require__(283);
 
 	var _DepartmentView2 = _interopRequireDefault(_DepartmentView);
 
-	var _DepartmentCreate = __webpack_require__(281);
+	var _DepartmentCreate = __webpack_require__(284);
 
 	var _DepartmentCreate2 = _interopRequireDefault(_DepartmentCreate);
 
-	var _DepartmentEdit = __webpack_require__(285);
+	var _DepartmentEdit = __webpack_require__(286);
 
 	var _DepartmentEdit2 = _interopRequireDefault(_DepartmentEdit);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(286);
+	__webpack_require__(287);
 
 	var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory, store);
+
+	//
+	// store.subscribe(() => {
+	//     console.log(store.getState());
+	// });
 
 	var routes = _react2.default.createElement(
 	    _reactRouter.Route,
@@ -29062,6 +29067,34 @@
 
 /***/ },
 /* 274 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	function createThunkMiddleware(extraArgument) {
+	  return function (_ref) {
+	    var dispatch = _ref.dispatch;
+	    var getState = _ref.getState;
+	    return function (next) {
+	      return function (action) {
+	        if (typeof action === 'function') {
+	          return action(dispatch, getState, extraArgument);
+	        }
+
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	var thunk = createThunkMiddleware();
+	thunk.withExtraArgument = createThunkMiddleware;
+
+	exports['default'] = thunk;
+
+/***/ },
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29095,6 +29128,19 @@
 	                isFetching: false
 	            });
 	            break;
+
+	        case 'REQUEST_CREATE_DEPARTMENT':
+	            return Object.assign({}, state, {
+	                isFetching: true
+	            });
+	            break;
+	        case 'SUCCESS_CREATE_DEPARTMENT':
+	            console.log(action.data);
+	            return Object.assign({}, state, {
+	                items: state.items.concat([action.data]),
+	                isFetching: false
+	            });
+	            break;
 	        case 'CREATE_DEPARTMENT':
 	            return state;
 	            break;
@@ -29109,7 +29155,88 @@
 	});
 
 /***/ },
-/* 275 */
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.successCreateDepartment = exports.requestCreateDepartment = exports.receiveDepartments = exports.requestDepartments = undefined;
+	exports.fetchDepartments = fetchDepartments;
+	exports.createDepartment = createDepartment;
+
+	var _isomorphicFetch = __webpack_require__(291);
+
+	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
+	var _reactRouter = __webpack_require__(216);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var requestDepartments = exports.requestDepartments = function requestDepartments() {
+	    return {
+	        type: 'REQUEST_DEPARTMENTS'
+	    };
+	};
+
+	var receiveDepartments = exports.receiveDepartments = function receiveDepartments(json) {
+	    return {
+	        type: 'RECEIVE_DEPARTMENTS',
+	        data: json
+	    };
+	};
+
+	function fetchDepartments() {
+	    return function (dispatch) {
+	        dispatch(requestDepartments());
+	        return (0, _isomorphicFetch2.default)('/api/departments').then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            return dispatch(receiveDepartments(json));
+	        });
+	    };
+	};
+
+	var requestCreateDepartment = exports.requestCreateDepartment = function requestCreateDepartment() {
+	    console.log('requestCreateDepartment');
+	    return {
+	        type: 'REQUEST_CREATE_DEPARTMENT'
+	    };
+	};
+
+	var successCreateDepartment = exports.successCreateDepartment = function successCreateDepartment(json) {
+	    console.log('successCreateDepartment');
+	    return {
+	        type: 'SUCCESS_CREATE_DEPARTMENT',
+	        data: json
+	    };
+	};
+
+	function createDepartment(department) {
+	    return function (dispatch) {
+	        dispatch(requestCreateDepartment());
+	        return (0, _isomorphicFetch2.default)('/api/department', { method: 'POST',
+	            headers: { 'Content-Type': 'application/json' },
+	            body: JSON.stringify(department) }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            _reactRouter.browserHistory.push('/departments');
+	            return dispatch(successCreateDepartment(json));
+	        });
+	    };
+	};
+
+	// export const createDepartment = (name) => {
+	//     return {
+	//         type: 'CREATE_DEPARTMENT',
+	//         data: name
+	//     };
+	// };
+
+/***/ },
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29122,7 +29249,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Sidebar = __webpack_require__(276);
+	var _Sidebar = __webpack_require__(278);
 
 	var _Sidebar2 = _interopRequireDefault(_Sidebar);
 
@@ -29146,7 +29273,7 @@
 	exports.default = App;
 
 /***/ },
-/* 276 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29195,7 +29322,7 @@
 	exports.default = Sidebar;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29214,14 +29341,26 @@
 	    return _react2.default.createElement(
 	        'div',
 	        { className: 'col-lg-9 col-md-9 col-sm-9' },
-	        'Index'
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'panel panel-default departments-list' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'panel-body' },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    'IndexPage'
+	                )
+	            )
+	        )
 	    );
 	};
 
 	exports.default = Index;
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29238,13 +29377,13 @@
 
 	var _reactRedux = __webpack_require__(178);
 
-	var _DepartmentsList = __webpack_require__(279);
+	var _DepartmentsList = __webpack_require__(281);
 
 	var _DepartmentsList2 = _interopRequireDefault(_DepartmentsList);
 
 	var _reactRouter = __webpack_require__(216);
 
-	var _actions = __webpack_require__(283);
+	var _actions = __webpack_require__(276);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29329,7 +29468,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(DepartmentsListView);
 
 /***/ },
-/* 279 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29346,7 +29485,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Department = __webpack_require__(280);
+	var _Department = __webpack_require__(282);
 
 	var _Department2 = _interopRequireDefault(_Department);
 
@@ -29391,7 +29530,7 @@
 	exports.default = DepartmentsList;
 
 /***/ },
-/* 280 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29439,199 +29578,7 @@
 	exports.default = Department;
 
 /***/ },
-/* 281 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(178);
-
-	var _DepartmentForm = __webpack_require__(282);
-
-	var _DepartmentForm2 = _interopRequireDefault(_DepartmentForm);
-
-	var _actions = __webpack_require__(283);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	    return {
-	        createDepartment: function createDepartment(department) {
-	            return dispatch((0, _actions.createDepartment)(department));
-	        },
-	        showCreateDepartment: function showCreateDepartment() {
-	            return dispatch(showCretateDepartment());
-	        },
-	        hideCreateDepartment: function hideCreateDepartment() {
-	            return dispatch((0, _actions.hideCreateDepartment)());
-	        }
-	    };
-	};
-
-	exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(_DepartmentForm2.default);
-
-/***/ },
-/* 282 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(216);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var DepartmentForm = function (_React$Component) {
-	    _inherits(DepartmentForm, _React$Component);
-
-	    function DepartmentForm(props) {
-	        _classCallCheck(this, DepartmentForm);
-
-	        return _possibleConstructorReturn(this, (DepartmentForm.__proto__ || Object.getPrototypeOf(DepartmentForm)).call(this, props));
-	    }
-
-	    _createClass(DepartmentForm, [{
-	        key: 'render',
-	        value: function render() {
-
-	            var department = this.props.department || {};
-
-	            var cancelPath = this.props.createDepartment ? '/departments' : '/department/' + department.id;
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'col-lg-9 col-md-9 col-sm-9' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'panel panel-default departments-list' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-heading' },
-	                        this.props.createDepartment ? _react2.default.createElement(
-	                            'h4',
-	                            null,
-	                            'Create Department'
-	                        ) : _react2.default.createElement(
-	                            'h4',
-	                            null,
-	                            'Edit Department'
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-body' },
-	                        _react2.default.createElement('input', { type: 'text', ref: 'name', className: 'form-control input-sm', defaultValue: department.name || '', placeholder: 'Department name...' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'panel-footer' },
-	                        this.props.createDepartment ? _react2.default.createElement(
-	                            'button',
-	                            { className: 'btn btn-primary btn-sm' },
-	                            'Create'
-	                        ) : _react2.default.createElement(
-	                            'button',
-	                            { className: 'btn btn-primary btn-sm' },
-	                            'Save'
-	                        ),
-	                        _react2.default.createElement(
-	                            _reactRouter.Link,
-	                            { className: 'btn btn-primary btn-sm', to: cancelPath },
-	                            'Cancel'
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return DepartmentForm;
-	}(_react2.default.Component);
-
-	exports.default = DepartmentForm;
-	;
-
-/***/ },
 /* 283 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.receiveDepartments = exports.requestDepartments = exports.createDepartment = undefined;
-	exports.fetchDepartments = fetchDepartments;
-
-	var _isomorphicFetch = __webpack_require__(290);
-
-	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var createDepartment = exports.createDepartment = function createDepartment(department) {
-	    return {
-	        type: 'CREATE_DEPARTMENT',
-	        data: department
-	    };
-	};
-
-	var requestDepartments = exports.requestDepartments = function requestDepartments() {
-	    return {
-	        type: 'REQUEST_DEPARTMENTS'
-	    };
-	};
-
-	var receiveDepartments = exports.receiveDepartments = function receiveDepartments(json) {
-	    return {
-	        type: 'RECEIVE_DEPARTMENTS',
-	        data: json
-	    };
-	};
-
-	function fetchDepartments() {
-	    return function (dispatch) {
-	        dispatch(requestDepartments());
-	        return (0, _isomorphicFetch2.default)('/api/departments').then(function (response) {
-	            return response.json();
-	        }).then(function (json) {
-	            return dispatch(receiveDepartments(json));
-	        });
-	    };
-	};
-
-	// export const createDepartment = (name) => {
-	//     return {
-	//         type: 'CREATE_DEPARTMENT',
-	//         data: name
-	//     };
-	// };
-
-/***/ },
-/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29707,7 +29654,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(DepartmentView);
 
 /***/ },
-/* 285 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29722,7 +29669,148 @@
 
 	var _reactRedux = __webpack_require__(178);
 
-	var _DepartmentForm = __webpack_require__(282);
+	var _DepartmentForm = __webpack_require__(285);
+
+	var _DepartmentForm2 = _interopRequireDefault(_DepartmentForm);
+
+	var _actions = __webpack_require__(276);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	    return {
+	        onCreateDepartment: function onCreateDepartment(department) {
+	            return dispatch((0, _actions.createDepartment)(department));
+	        }
+	    };
+	};
+
+	exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(_DepartmentForm2.default);
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(216);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var DepartmentForm = function (_React$Component) {
+	    _inherits(DepartmentForm, _React$Component);
+
+	    function DepartmentForm(props) {
+	        _classCallCheck(this, DepartmentForm);
+
+	        var _this = _possibleConstructorReturn(this, (DepartmentForm.__proto__ || Object.getPrototypeOf(DepartmentForm)).call(this, props));
+
+	        _this.createDepartment = _this.createDepartment.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(DepartmentForm, [{
+	        key: 'createDepartment',
+	        value: function createDepartment() {
+	            var name = this.refs.name.value.trim();
+	            if (name) {
+	                this.props.onCreateDepartment({ name: name });
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            var department = this.props.department || {};
+
+	            var cancelPath = this.props.onCreateDepartment ? '/departments' : '/department/' + department.id;
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-lg-9 col-md-9 col-sm-9' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default departments-list' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        this.props.onCreateDepartment ? _react2.default.createElement(
+	                            'h4',
+	                            null,
+	                            'Create Department'
+	                        ) : _react2.default.createElement(
+	                            'h4',
+	                            null,
+	                            'Edit Department'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement('input', { type: 'text', ref: 'name', className: 'form-control input-sm', defaultValue: department.name || '', placeholder: 'Department name...' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-footer' },
+	                        this.props.onCreateDepartment ? _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-primary btn-sm', onClick: this.createDepartment },
+	                            'Create'
+	                        ) : _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-primary btn-sm' },
+	                            'Save'
+	                        ),
+	                        _react2.default.createElement(
+	                            _reactRouter.Link,
+	                            { className: 'btn btn-primary btn-sm', to: cancelPath },
+	                            'Cancel'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return DepartmentForm;
+	}(_react2.default.Component);
+
+	exports.default = DepartmentForm;
+	;
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(178);
+
+	var _DepartmentForm = __webpack_require__(285);
 
 	var _DepartmentForm2 = _interopRequireDefault(_DepartmentForm);
 
@@ -29744,16 +29832,16 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_DepartmentForm2.default);
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(287);
+	var content = __webpack_require__(288);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(289)(content, {});
+	var update = __webpack_require__(290)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -29770,21 +29858,21 @@
 	}
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(288)();
+	exports = module.exports = __webpack_require__(289)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "html, body {\n  height: 100%;\n  width: 100%; }\n\n#app {\n  height: 100%; }\n\n.sidebar {\n  height: 100%;\n  background-color: #f6f6f6; }\n\n.department {\n  margin-bottom: 15px;\n  border-bottom: 1px solid #f6f6f6; }\n", ""]);
+	exports.push([module.id, "html, body {\n  height: 100%;\n  width: 100%; }\n\n#app {\n  height: 100%; }\n\n.department {\n  margin-bottom: 15px;\n  border-bottom: 1px solid #f6f6f6; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports) {
 
 	/*
@@ -29840,7 +29928,7 @@
 
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -30092,19 +30180,19 @@
 
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(291);
+	__webpack_require__(292);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports) {
 
 	(function(self) {
@@ -30566,34 +30654,6 @@
 	  self.fetch.polyfill = true
 	})(typeof self !== 'undefined' ? self : this);
 
-
-/***/ },
-/* 292 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	function createThunkMiddleware(extraArgument) {
-	  return function (_ref) {
-	    var dispatch = _ref.dispatch;
-	    var getState = _ref.getState;
-	    return function (next) {
-	      return function (action) {
-	        if (typeof action === 'function') {
-	          return action(dispatch, getState, extraArgument);
-	        }
-
-	        return next(action);
-	      };
-	    };
-	  };
-	}
-
-	var thunk = createThunkMiddleware();
-	thunk.withExtraArgument = createThunkMiddleware;
-
-	exports['default'] = thunk;
 
 /***/ }
 /******/ ]);

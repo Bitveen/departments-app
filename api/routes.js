@@ -10,8 +10,8 @@ const router = require('koa-router')({
 const departments = require('./departments');
 
 router.get('/departments', departments.getAll);
-router.get('/department/:id', departments.get);
 router.post('/department', departments.create);
+router.get('/department/:id', departments.get);
 router.put('/department/:id', departments.update);
 
 

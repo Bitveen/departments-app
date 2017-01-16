@@ -14,7 +14,8 @@ class DepartmentsList extends React.Component {
             <div className='departments-list'>
                 {departments.map(department => {
                     return (<Department key={department.id} {...department} />);
-                })}
+                })
+                }
             </div>
 
 

@@ -38,11 +38,11 @@ handler.get = function* () {
  * @return {type}  description
  */
 handler.create = function* () {
-    let {id, name} = this.params;
-    const insertedId = yield Department.create(id, name);
+    let { name } = this.request.body;
+    const insertedId = yield Department.create(name);
     this.status = 201;
     this.set('Content-Type', 'application/json');
-    this.body = { status: 'OK', id: insertedId };
+    this.body = { id: insertedId, name: name };
 };
 
 

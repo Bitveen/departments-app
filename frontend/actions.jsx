@@ -1,13 +1,6 @@
 import fetch from 'isomorphic-fetch';
+import { browserHistory } from 'react-router';
 
-
-
-export const createDepartment = (department) => {
-    return {
-        type: 'CREATE_DEPARTMENT',
-        data: department
-    };
-};
 
 
 export const requestDepartments = () => {
@@ -31,6 +24,46 @@ export function fetchDepartments() {
             .then(json => dispatch(receiveDepartments(json)))
     };
 };
+
+
+
+
+
+
+export const requestCreateDepartment = () => {
+    console.log('requestCreateDepartment');
+    return {
+        type: 'REQUEST_CREATE_DEPARTMENT'
+    };
+};
+
+
+export const successCreateDepartment = (json) => {
+    console.log('successCreateDepartment');
+    return {
+        type: 'SUCCESS_CREATE_DEPARTMENT',
+        data: json
+    };
+};
+
+
+
+
+export function createDepartment(department) {
+    return dispatch => {
+        dispatch(requestCreateDepartment());
+        return fetch(`/api/department`, { method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(department) })
+            .then(response => response.json())
+            .then(json => {
+                browserHistory.push('/departments');
+                return dispatch(successCreateDepartment(json));
+            });
+    };
+};
+
+
 
 
 

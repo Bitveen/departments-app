@@ -41,7 +41,8 @@ Department.update = function* (id, name) {
 Department.create = function* (name) {
     // TODO: validation params
     try {
-        const [result] = yield global.db.query('INSERT INTO departments(name) VALUES(:name)', { name });
+        console.log(name);
+        const [result] = yield global.db.query(`INSERT INTO departments(name) VALUES(:name)`, {name});
         return result.insertId;
     } catch(e) {
         // TODO: throw errors
@@ -51,7 +52,7 @@ Department.create = function* (name) {
 
 /**
  * Department - description
- *  
+ *
  * @return {type}  description
  */
 Department.getAll = function* () {

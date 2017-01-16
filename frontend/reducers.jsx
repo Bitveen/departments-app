@@ -19,6 +19,19 @@ export const departments = (state = {
                 isFetching: false
             });
             break;
+
+        case 'REQUEST_CREATE_DEPARTMENT':
+            return Object.assign({}, state, {
+                isFetching: true
+            });
+            break;
+        case 'SUCCESS_CREATE_DEPARTMENT':
+            console.log(action.data);
+            return Object.assign({}, state, {
+                items: state.items.concat([action.data]),
+                isFetching: false
+            });
+            break;
         case 'CREATE_DEPARTMENT':
             return state;
             break;

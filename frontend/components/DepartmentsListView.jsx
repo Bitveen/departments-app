@@ -38,7 +38,7 @@ class DepartmentsListView extends React.Component {
                         <h4>All departments</h4>
                     </div>
                     <div className="panel-body">
-                        <DepartmentsList departments={departments}/>
+                        <DepartmentsList departments={departments} />
                     </div>
                     <div className="panel-footer">
                         <Link className='btn btn-primary btn-sm' to={`/department/create`}>Create department</Link>
