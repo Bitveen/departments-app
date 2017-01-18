@@ -14,13 +14,13 @@ describe('API Departments', function() {
                 .get('/api/departments')
                 .expect(200)
                 .expect('Content-Type', /json/)
-                .end(done)
+                .end(done);
         });
     });
 
     describe('GET /api/department/:id', function() {
         it('should get one department by id', function (done) {
-            
+
 
         });
         it('should set 404 status code when there is no department with given id', function* () {});

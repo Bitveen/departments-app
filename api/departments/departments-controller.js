@@ -3,8 +3,8 @@
  */
 'use strict';
 
-const sequelize = require('../config/db');
-const Department = sequelize.import('../models/department');
+const sequelize = require('../../config/db');
+const Department = sequelize.import('../../models/department');
 const handler = module.exports = {};
 
 
@@ -49,16 +49,17 @@ handler.get = function* () {
  *
  * POST /api/department
  *
- * @return {type}  description
+ * @return {JSON}  Newly created department
  */
 handler.create = function* () {
     try {
         let { name } = this.request.body;
-        yield Department.create({ name });
+        const savedDepartment = yield Department.create({ name });
+        const department = yield savedDepartment.get({ plain: true });
         this.status = 201;
         this.set('Content-Type', 'application/json');
-        this.set('Location', `/api/department/`);
-        //this.body = { id: insertedId, name: name };
+        this.set('Location', `/api/department/${department.id}`);
+        this.body = department;
     } catch (e) {
         this.throw(e);
     }
@@ -70,13 +71,19 @@ handler.create = function* () {
  *
  * PUT /api/department/:id
  *
- * @return {type}  description
+ * @return {JSON}  Updated department
  */
 handler.update = function* () {
-    let { id } = this.params;
-    let { name } = this.request.body;
-    yield Department.update(id, name);
-    this.status = 200;
-    this.set('Content-Type', 'application/json');
-    this.body = { id, name };
+    try {
+        let { id } = this.params;
+        let { name } = this.request.body;
+        const existingDepartment = yield Department.findById(id);
+        const updatedDepartment = yield existingDepartment.update({ name: name });
+        this.status = 200;
+        this.set('Content-Type', 'application/json');
+        this.set('Location', '/api/department/${updatedDepartment.id}');
+        this.body = updatedDepartment;
+    } catch (e) {
+        this.throw(e);
+    }
 };

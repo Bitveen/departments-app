@@ -1,5 +1,6 @@
+'use strict';
 /**
- * DB Connection 
+ * DB Connection
  */
 const {database, username, password} = require('./config');
 
@@ -10,4 +11,3 @@ const sequelize = module.exports = new Sequelize(database, username, password, {
         engine: 'MYISAM'
     }
 });
-

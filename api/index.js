@@ -4,21 +4,11 @@
 
 'use strict';
 
-const koa        = require('koa');
-const Sequelize  = require('sequelize');
-const sequelize  = require('../config/db');
-
-
-
+const koa = require('koa');
 const app = module.exports = koa();
-
-
-// app.use(function* mysqlConnection(next) {
-
-// });
 
 
 /**
  * Connect routes
  */
-app.use(require('./routes'));
+app.use(require('./departments/departments-routes'));

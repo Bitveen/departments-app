@@ -1,4 +1,12 @@
-module.exports = (sequelize, DataTypes) => {
+'use strict';
+
+/**
+ * Schema for Department model
+ * 
+ */
+
+
+const Department = (sequelize, DataTypes) => {
     return sequelize.define('department', {
         id: {
             type: DataTypes.INTEGER,
@@ -9,14 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             unique: true,
-            allowNull: false,
-            validate: {
-                notNull: true,
-                notEmpty: true
-            }
+            allowNull: false
         }
-    }, {
-        tableName: 'departments',
-        comment: 'Table to store departments info'
     });
 };
+
+module.exports = Department;
