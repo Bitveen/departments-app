@@ -3,51 +3,72 @@
  */
 'use strict';
 
-
-const Department = require('../models/department');
+const sequelize = require('../config/db');
+const Department = sequelize.import('../models/department');
 const handler = module.exports = {};
 
 
 /**
- * Get all departments from model
+ * Get all departments from database
  *
- * @return {type}  JSON representation of all departments
+ * GET /api/departments
+ *
+ * @return {JSON}  JSON representation of all departments
  */
 handler.getAll = function* () {
-    const departments = yield Department.getAll();
-    this.status = 200;
-    this.set('Content-Type', 'application/json');
-    this.body = departments;
+    try {
+        const departments = yield Department.findAll();
+        this.status = 200;
+        this.set('Content-Type', 'application/json');
+        this.body = departments;
+    } catch(e) {
+        this.throw(e);
+    }
 };
 
 /**
- * Get one department by id
+ * Get one department by id from database
  *
- * @return {type}  description
+ * GET /api/department/:id
+ *
+ * @return {JSON}  JSON representation of one department
  */
 handler.get = function* () {
-    const department = yield Department.get(this.params.id);
-    this.status = 200;
-    this.set('Content-Type', 'application/json');
-    this.body = department;
+    try {
+        const department = yield Department.findById(this.params.id);
+        this.status = 200;
+        this.set('Content-Type', 'application/json');
+        this.body = department;
+    } catch (e) {
+        this.throw(e);
+    }
 };
 
 /**
- * Create department
+ * Create department with given name
+ *
+ * POST /api/department
  *
  * @return {type}  description
  */
 handler.create = function* () {
-    let { name } = this.request.body;
-    const insertedId = yield Department.create(name);
-    this.status = 201;
-    this.set('Content-Type', 'application/json');
-    this.body = { id: insertedId, name: name };
+    try {
+        let { name } = this.request.body;
+        yield Department.create({ name });
+        this.status = 201;
+        this.set('Content-Type', 'application/json');
+        this.set('Location', `/api/department/`);
+        //this.body = { id: insertedId, name: name };
+    } catch (e) {
+        this.throw(e);
+    }
 };
 
 
 /**
- * Update existing department by id
+ * Update an existing department by id
+ *
+ * PUT /api/department/:id
  *
  * @return {type}  description
  */

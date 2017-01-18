@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
             unique: true,
             allowNull: false,
             validate: {
-                is: ["^[a-z]+$",'i'],
                 notNull: true,
                 notEmpty: true
             }

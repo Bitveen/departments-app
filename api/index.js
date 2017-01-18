@@ -6,16 +6,16 @@
 
 const koa        = require('koa');
 const Sequelize  = require('sequelize');
-const sequelize  = require('./config/db');
+const sequelize  = require('../config/db');
 
 
 
-const app = module.exports.app = koa();
+const app = module.exports = koa();
 
 
-app.use(function* mysqlConnection(next) {
+// app.use(function* mysqlConnection(next) {
 
-});
+// });
 
 
 /**

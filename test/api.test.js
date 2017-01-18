@@ -1,7 +1,55 @@
 'use strict';
 
 const supertest = require('supertest');
-const expect = require('chai').expect;
+const app       = require('../server');
+const request   = supertest.agent(app.listen());
+
+
+describe('API Departments', function() {
+
+
+    describe('GET /api/departments', function() {
+        it('should get all departments', function (done) {
+            request
+                .get('/api/departments')
+                .expect(200)
+                .expect('Content-Type', /json/)
+                .end(done)
+        });
+    });
+
+    describe('GET /api/department/:id', function() {
+        it('should get one department by id', function (done) {
+            
+
+        });
+        it('should set 404 status code when there is no department with given id', function* () {});
+    });
+
+    // describe('create', function() {
+    //     it('should create new department', function* () {});
+    //     it('shouldn\'t create new department with invalid name', function* () {});
+    // });
+    //
+    //
+    // describe('update', function() {
+    //     it('should update an existing department', function* () {});
+    //     it('shouldn\'t update an existing department with invalid name', function* () {});
+    // });
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
 
 // const app = require('../server');
 // const request = supertest.agent(app.listen());
