@@ -1,67 +1,125 @@
 'use strict';
 
-const supertest = require('supertest');
-const expect = require('chai').expect;
+const supertest  = require('supertest');
+const app        = require('../server');
+const request    = supertest.agent(app.listen());
+const sequelize  = require('../config/db');
+const Department = sequelize.import('../models/department');
 
-const app = require('../server');
-const request = supertest.agent(app.listen());
+describe('API Departments', function() {
 
-describe('API', () => {
+    let department = { name: 'New department' };
 
-    describe('/departments', () => {
+    before(function(done) {
+        Department.destroy({ where: { name: ['New department', 'Another new department'] } })
+            .then(function() {
+                done();
+            });
+    });
 
-        it('returns departments list', function* () {
-            const response = yield request.get('/departments').end();
-            expect(response.status).to.equal(200, response.text);
-            expect(response.body).to.be.an('array');
-            expect(response.body).to.have.length.above(1);
+    describe('POST /api/department', function() {
+        it('should create new department', function (done) {
+            request
+                .post('/api/department')
+                .send(department)
+                .expect(201)
+                .expect('Content-Type', /json/)
+                .end(function(err, res) {
+                    if (err) return done(err);
+                    department = res.body;
+                    done();
+                });
+        });
+        it('shouldn\'t create new department with invalid name', function (done) {
+            request
+                .post('/api/department')
+                .send({ name: '' })
+                .expect(400)
+                .end(done);
+        });
+    });
+
+
+    describe('GET /api/department/:id', function() {
+        it('should get one department by id', function (done) {
+            request
+                .get('/api/department/' + department.id)
+                .expect(200)
+                .expect('Content-Type', /json/)
+                .expect(/New department/)
+                .end(done);
+        });
+        it('should set 404 status code when there is no department with given id', function (done) {
+            request
+                .get('/api/department/zzz')
+                .expect(404)
+                .expect('Content-Type', /json/)
+                .end(done);
+        });
+    });
+
+
+
+
+    describe('GET /api/departments', function() {
+        it('should get all departments', function (done) {
+            request
+                .get('/api/departments')
+                .expect(200)
+                .expect('Content-Type', /json/)
+                .end(done);
+        });
+    });
+
+
+    describe('PUT /api/department/:id', function() {
+        it('should update an existing department', function (done) {
+            request
+                .put('/api/department/' + department.id)
+                .send({ name: 'Another new department' })
+                .expect(200)
+                .expect('Content-Type', /json/)
+                .expect(/Another new department/)
+                .end(function(err, res) {
+                    if (err) return done(err);
+                    department = res.body;
+                    done();
+                });
+        });
+        it('shouldn\'t update an existing department with invalid name', function (done) {
+            request
+                .put('/api/department/' + department.id)
+                .send({ name: '' })
+                .expect(400)
+                .expect('Content-Type', /json/)
+                .end(done);
+        });
+
+        it('should set 404 status when not existing id provided', function (done) {
+            request
+                .put('/api/department/qqqq')
+                .send({ name: 'New name' })
+                .expect(404)
+                .expect('Content-Type', /json/)
+                .expect(/Not found/)
+                .end(done);
         });
 
 
     });
 
 
-    describe('CRUD', () => {
-        let id = null;
 
-        it('create department', function* () {
-            let department = {
-                name: 'My new department for testing'
-            };
-            const response = yield request.post('/department').send(department).end();
-            expect(response.status).to.equal(201, response.text);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.contain.keys('id');
-            id = response.body.id;
+    describe('Not found handler', function() {
+        it('should handle not existing route', function(done) {
+            request
+                .get('/api/sfsdfsdfdsf')
+                .expect(404)
+                .expect('Content-Type', /json/)
+                .expect(/Not found/)
+                .end(done);
         });
-
-
-        it('update existing department by id', function* () {
-            let department = {
-                name: 'My updated department'
-            };
-
-            const response = yield request.put('/department/' + id).send(department).end();
-            expect(response.status).to.equal(200, response.text);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.contain.keys('status');
-            expect(response.body.status).to.equal('OK');
-        });
-
-        it('getting existing department by id', function* () {
-            const response = yield request.get('/department/' + id).end();
-            expect(response.status).to.equal(200, response.text);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.contain.keys('id', 'name');
-            expect(response.body.id).to.equal(id);
-        });
-
-
     });
-
-
-
-
 
 
 });
