@@ -30,7 +30,14 @@ describe('API Departments', function() {
                     done();
                 });
         });
-        //it('shouldn\'t create new department with invalid name', function () {});
+        it('shouldn\'t create new department with invalid name', function (done) {
+            request
+                .post('/api/department')
+                .send({ name: '' })
+                .expect(400)
+                .expect(/Invalid name/)
+                .end(done);
+        });
     });
 
 
@@ -80,7 +87,40 @@ describe('API Departments', function() {
                     done();
                 });
         });
-        //it('shouldn\'t update an existing department with invalid name', function* () {});
+        it('shouldn\'t update an existing department with invalid name', function (done) {
+            request
+                .put('/api/department/' + department.id)
+                .send({ name: '' })
+                .expect(400)
+                .expect('Content-Type', /json/)
+                .expect(/Invalid name/)
+                .end(done);
+        });
+
+        it('should set 404 status when not existing id provided', function (done) {
+            request
+                .put('/api/department/qqqq')
+                .send({ name: 'New name' })
+                .expect(404)
+                .expect('Content-Type', /json/)
+                .expect(/Not found/)
+                .end(done);
+        });
+
+
+    });
+
+
+
+    describe('Not found handler', function() {
+        it('should handle not existing route', function(done) {
+            request
+                .get('/api/sfsdfsdfdsf')
+                .expect(404)
+                .expect('Content-Type', /json/)
+                .expect(/Not found/)
+                .end(done);
+        });
     });
 
 

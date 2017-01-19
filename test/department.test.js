@@ -3,7 +3,7 @@
 
 /**
  * Model and connection
- * 
+ *
  */
 const sequelize  = require('../config/db');
 const Department = sequelize.import(__dirname + '/../models/department');
@@ -35,4 +35,3 @@ describe('Department model', function() {
     });
 
 });
-

@@ -3,10 +3,10 @@
  */
 'use strict';
 
-const sequelize = require('../../config/db');
+const sequelize  = require('../../config/db');
 const Department = sequelize.import('../../models/department');
-const handler = module.exports = {};
-
+const handler    = module.exports = {};
+const errorUtils = require('../../utils/errorHandler');
 
 /**
  * Get all departments from database
@@ -22,7 +22,7 @@ handler.getAll = function* () {
         this.set('Content-Type', 'application/json');
         this.body = departments;
     } catch(e) {
-        this.throw(e);
+        errorUtils.log(e, this);
     }
 };
 
@@ -36,15 +36,12 @@ handler.getAll = function* () {
 handler.get = function* () {
     try {
         const department = yield Department.findById(this.params.id);
+        if (!department) this.throw(404, 'Not found');
         this.status = 200;
         this.set('Content-Type', 'application/json');
         this.body = department;
-        if (!department) {
-            this.status = 404;
-            this.body = {};
-        }
     } catch (e) {
-        this.throw(e);
+        errorUtils.log(e, this);
     }
 };
 
@@ -58,6 +55,7 @@ handler.get = function* () {
 handler.create = function* () {
     try {
         let { name } = this.request.body;
+        if (!name) this.throw(400, 'Invalid name');
         const savedDepartment = yield Department.create({ name });
         const department = yield savedDepartment.get({ plain: true });
         this.status = 201;
@@ -65,7 +63,7 @@ handler.create = function* () {
         this.set('Location', `/api/department/${department.id}`);
         this.body = department;
     } catch (e) {
-        this.throw(e);
+        errorUtils.log(e, this);
     }
 };
 
@@ -79,15 +77,17 @@ handler.create = function* () {
  */
 handler.update = function* () {
     try {
-        let { id } = this.params;
-        let { name } = this.request.body;
+        let {id} = this.params;
+        let {name} = this.request.body;
+        if (!name) this.throw(400, 'Invalid name');
         const existingDepartment = yield Department.findById(id);
+        if (!existingDepartment) this.throw(404, 'Not found');
         const updatedDepartment = yield existingDepartment.update({ name: name });
         this.status = 200;
         this.set('Content-Type', 'application/json');
         this.set('Location', '/api/department/${updatedDepartment.id}');
         this.body = updatedDepartment;
     } catch (e) {
-        this.throw(e);
+        errorUtils.log(e, this);
     }
 };

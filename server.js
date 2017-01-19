@@ -44,6 +44,12 @@ app.use(function* composeSubapp() {
 
 
 
+/**
+ * Unhandled server errors
+ */
+app.on('error', function(err, ctx) {
+    console.error(err, ctx);
+});
 
 
 
