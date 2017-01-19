@@ -2,7 +2,7 @@
 
 /**
  * Schema for Department model
- * 
+ *
  */
 
 
@@ -17,7 +17,10 @@ const Department = (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             unique: true,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                len: [2, 255]
+            }
         }
     });
 };

@@ -7,7 +7,7 @@
 
 const errorHandler = module.exports = {};
 errorHandler.log = (err, ctx) => {
-    ctx.status = err.status;
+    ctx.status = err.status || 400;
     ctx.set('Content-Type', 'application/json');
-    ctx.body = { status: err.status, message: err.message };
+    ctx.body = { status: err.status || 400, message: err.message };
 };

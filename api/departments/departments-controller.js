@@ -55,9 +55,8 @@ handler.get = function* () {
 handler.create = function* () {
     try {
         let { name } = this.request.body;
-        if (!name) this.throw(400, 'Invalid name');
         const savedDepartment = yield Department.create({ name });
-        const department = yield savedDepartment.get({ plain: true });
+        const department = savedDepartment.get();
         this.status = 201;
         this.set('Content-Type', 'application/json');
         this.set('Location', `/api/department/${department.id}`);
@@ -79,14 +78,14 @@ handler.update = function* () {
     try {
         let {id} = this.params;
         let {name} = this.request.body;
-        if (!name) this.throw(400, 'Invalid name');
         const existingDepartment = yield Department.findById(id);
         if (!existingDepartment) this.throw(404, 'Not found');
-        const updatedDepartment = yield existingDepartment.update({ name: name });
+        const updatedDepartment = yield existingDepartment.update({ name });
+        const department = updatedDepartment.get();
         this.status = 200;
         this.set('Content-Type', 'application/json');
-        this.set('Location', '/api/department/${updatedDepartment.id}');
-        this.body = updatedDepartment;
+        this.set('Location', '/api/department/${department.id}');
+        this.body = department;
     } catch (e) {
         errorUtils.log(e, this);
     }

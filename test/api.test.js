@@ -35,7 +35,6 @@ describe('API Departments', function() {
                 .post('/api/department')
                 .send({ name: '' })
                 .expect(400)
-                .expect(/Invalid name/)
                 .end(done);
         });
     });
@@ -93,7 +92,6 @@ describe('API Departments', function() {
                 .send({ name: '' })
                 .expect(400)
                 .expect('Content-Type', /json/)
-                .expect(/Invalid name/)
                 .end(done);
         });
 
