@@ -39,6 +39,10 @@ handler.get = function* () {
         this.status = 200;
         this.set('Content-Type', 'application/json');
         this.body = department;
+        if (!department) {
+            this.status = 404;
+            this.body = {};
+        }
     } catch (e) {
         this.throw(e);
     }
